@@ -27,42 +27,46 @@ VALIDATE(){
     fi
 }
 
-
 curl -sL https://rpm.nodesource.com/setup_lts.x | bash &>>$LOGFILE
 
-VALIDATE $? "Setting up NPM source"
+VALIDATE $? "Setting up NPM Source"
 
 yum install nodejs -y &>>$LOGFILE
 
-VALIDATE $? "Installing node JS"
+VALIDATE $? "Installing NodeJS"
 
+#once the user is created, if you run this script 2nd time
+# this command will defnitely fail
+# IMPROVEMENT: first check the user already exist or not, if not exist then create
 useradd roboshop &>>$LOGFILE
 
+#write a condition to check directory already exist or not
 mkdir /app &>>$LOGFILE
 
-curl -L -o /tmp/cart.zip https://roboshop-builds.s3.amazonaws.com/cart.zip &>>$LOGFILE
+curl -o /tmp/cart.zip https://roboshop-builds.s3.amazonaws.com/cart.zip &>>$LOGFILE
 
-VALIDATE $? "Downloading catalogue artifact"
+VALIDATE $? "downloading cart artifact"
 
 cd /app &>>$LOGFILE
 
-VALIDATE $? "Moving in to app directory"
+VALIDATE $? "Moving into app directory"
 
 unzip /tmp/cart.zip &>>$LOGFILE
 
-VALIDATE $? "Unzipping cart"
+VALIDATE $? "unzipping cart"
 
 npm install &>>$LOGFILE
 
-VALIDATE $? "Installing NPM"
+VALIDATE $? "Installing dependencies"
 
+# give full path of cart.service because we are inside /app
 cp /home/centos/roboshop-shell/cart.service /etc/systemd/system/cart.service &>>$LOGFILE
 
-VALIDATE $? "Copying cart.service"
+VALIDATE $? "copying cart.service"
 
 systemctl daemon-reload &>>$LOGFILE
 
-VALIDATE $? "daemon-reload"
+VALIDATE $? "daemon reload"
 
 systemctl enable cart &>>$LOGFILE
 
