@@ -27,7 +27,6 @@ VALIDATE(){
     fi
 }
 
-
 yum module disable mysql -y &>> $LOGFILE
 
 VALIDATE $? "Disabling the default version"
